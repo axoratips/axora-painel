@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ÁXORA · Painel de Desempenho</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial,sans-serif;padding:22px;max-width:1100px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:16px;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .b{width:38px;height:38px;border-radius:9px;background:#0E7490;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:20px}
+.t1{font-size:19px;font-weight:700;letter-spacing:.5px}.t2{font-size:12px;color:#22D3EE;letter-spacing:2px}
+.sub{font-size:12px;color:#9FB3C8;text-align:right}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:#111A2B;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}
+.kpi.hl{border-color:rgba(34,211,238,.35)}
+.kpi .k{font-size:11px;color:#9FB3C8;letter-spacing:.5px}
+.kpi .v{font-size:26px;font-weight:800;margin-top:2px}.kpi .s{font-size:11px;color:#9FB3C8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:12px}
+.card{background:#111A2B;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px}
+.card h3{font-size:13px;color:#C9D6E5;font-weight:600;margin-bottom:10px}
+.leg{display:flex;gap:14px;font-size:12px;color:#9FB3C8;margin-bottom:6px}
+.leg i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:5px}
+.foot{font-size:11px;color:#64748B;margin-top:16px;text-align:center}
+.cyan{color:#22D3EE}.green{color:#34D399}
+@media(max-width:680px){.grid,.grid2{grid-template-columns:1fr}}
+</style></head><body>
+<div class="head">
+  <div class="logo"><div class="b">Á</div><div>
+    <div class="t1">ÁXORA · Painel de Desempenho</div><div class="t2">SPORTS INTELLIGENCE</div></div></div>
+  <div class="sub">Transparência total · green e red registrados<br>atualizado 22/06/2026</div>
+</div>
+<div class="kpis">
+  <div class="kpi hl"><div class="k">SALDO VITRINE</div><div class="v green" id="kSaldo"></div></div>
+  <div class="kpi"><div class="k">ROI VITRINE</div><div class="v cyan" id="kRoi"></div></div>
+  <div class="kpi"><div class="k">WINRATE VITRINE</div><div class="v" id="kWr"></div><div class="s" id="kWrs"></div></div>
+  <div class="kpi"><div class="k">TIPS REGISTRADAS</div><div class="v" id="kTot"></div><div class="s" id="kTots"></div></div>
+</div>
+<div class="grid">
+  <div class="card"><h3>P/L por dia (u)</h3><div style="position:relative;height:200px"><canvas id="cDia" role="img" aria-label="P/L por dia em unidades"></canvas></div></div>
+  <div class="card"><h3>Curva acumulada — Vitrine (u)</h3><div style="position:relative;height:200px"><canvas id="cAcum" role="img" aria-label="Curva acumulada da vitrine"></canvas></div></div>
+</div>
+<div class="grid2">
+  <div class="card"><h3>Desempenho por categoria (u)</h3><div style="position:relative;height:320px"><canvas id="cCat" role="img" aria-label="Unidades por categoria"></canvas></div></div>
+  <div class="card"><h3>Green vs Red — Vitrine</h3>
+    <div class="leg"><span><i style="background:#34D399"></i>Green <b id="lg"></b></span><span><i style="background:#F87171"></i>Red <b id="lr"></b></span></div>
+    <div style="position:relative;height:220px"><canvas id="cDonut" role="img" aria-label="Green vs red da vitrine"></canvas></div></div>
+</div>
+<div class="foot">+18 · Aposte com responsabilidade · gestão de banca em 1º lugar · by ÁXORA Sports Intelligence</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06"], "pl_dia": [8.1, -5.28, -2.02, -4.71, 4.12, -2.46], "vit_cum": [2.3, 2.02, 2.0, 1.07, 3.14, 0.91], "cat_labels": ["Seguras", "Valor", "Ousadas", "Certeira", "Forra Cert.", "Forra Equil.", "Forra Sonho"], "cat_units": [-1.05, 1.96, -2.55, -2.19, -3.0, 5.58, -1.0], "vit_saldo": 0.91, "vit_roi": 4.1, "vit_wr": 64, "vit_g": 14, "vit_r": 8, "tot_g": 22, "tot_r": 24, "tot_n": 46, "geral_u": -2.25};
+const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
+const br=(n,d=2)=>(n>=0?"+":"")+n.toFixed(d).replace(".",",");
+kSaldo.textContent=br(D.vit_saldo)+"u";kSaldo.style.color=D.vit_saldo>=0?G:R;
+kRoi.textContent=br(D.vit_roi,1)+"%";
+kWr.textContent=Math.round(D.vit_wr)+"%";kWrs.textContent=D.vit_g+"G · "+D.vit_r+"R";
+kTot.textContent=D.tot_n;kTots.textContent=D.tot_g+"G · "+D.tot_r+"R";
+lg.textContent=D.vit_g;lr.textContent=D.vit_r;
+Chart.defaults.color=MUT;Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
+new Chart(cDia,{type:'bar',data:{labels:D.labels,datasets:[{data:D.pl_dia,backgroundColor:D.pl_dia.map(v=>v>=0?G:R),borderRadius:4}]},
+ options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
+new Chart(cAcum,{type:'line',data:{labels:D.labels,datasets:[{data:D.vit_cum,borderColor:CY,backgroundColor:'rgba(34,211,238,.15)',fill:true,tension:.35,pointBackgroundColor:CY,pointRadius:3}]},
+ options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
+new Chart(cCat,{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_units,backgroundColor:D.cat_units.map(v=>v>=0?G:R),borderRadius:4}]},
+ options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:GRID}},y:{grid:{display:false}}}}});
+new Chart(cDonut,{type:'doughnut',data:{labels:["Green","Red"],datasets:[{data:[D.vit_g,D.vit_r],backgroundColor:[G,R],borderColor:"#0A0E1A",borderWidth:2}]},
+ options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
+</script></body></html>
