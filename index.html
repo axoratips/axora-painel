@@ -21,6 +21,7 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 .leg{display:flex;gap:14px;font-size:12px;color:#9FB3C8;margin-bottom:6px}
 .leg i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:5px}
 .foot{font-size:11px;color:#64748B;margin-top:16px;text-align:center}
+.note{font-size:10px;color:#5A6B7D;margin-top:14px;text-align:center;line-height:1.5;font-style:italic}
 .cyan{color:#22D3EE}.green{color:#34D399}
 @media(max-width:680px){.grid,.grid2{grid-template-columns:1fr}}
 </style></head><body>
@@ -45,10 +46,11 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
     <div class="leg"><span><i style="background:#34D399"></i>Green <b id="lg"></b></span><span><i style="background:#F87171"></i>Red <b id="lr"></b></span></div>
     <div style="position:relative;height:220px"><canvas id="cDonut" role="img" aria-label="Green vs red da vitrine"></canvas></div></div>
 </div>
+<div class="note">* Saldo, ROI, winrate, tips, P/L por dia e green×red consideram as entradas <b>Seguras, Valor e Certeira</b>. O gráfico "Desempenho por categoria" mostra cada categoria individualmente.</div>
 <div class="foot">+18 · Aposte com responsabilidade · gestão de banca em 1º lugar · by ÁXORA Sports Intelligence</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "29/06"], "pl_dia": [8.1, -5.28, -2.02, -4.71, 4.12, -2.46, 2.16, -1.2, -0.38], "vit_cum": [2.3, 2.02, 2.0, 1.07, 3.14, 0.91, 4.47, 5.09, 5.49], "cat_labels": ["Seguras", "Valor", "Ousadas", "Certeira", "Forra Cert.", "Forra Equil.", "Forra Sonho"], "cat_units": [0.42, 5.07, -2.07, -2.67, -5.0, 3.58, -1.0], "vit_saldo": 5.49, "vit_roi": 16.1, "vit_wr": 74, "vit_g": 25, "vit_r": 9, "tot_g": 37, "tot_r": 32, "tot_n": 69, "geral_u": -1.67};
+const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "29/06"], "pl_dia": [2.52, -1.28, -1.02, -0.71, 1.07, -1.86, 3.86, -0.38, 0.62], "vit_cum": [2.52, 1.24, 0.22, -0.49, 0.58, -1.28, 2.58, 2.2, 2.82], "cat_labels": ["Seguras", "Valor", "Ousadas", "Certeira", "Forra Cert.", "Forra Equil.", "Forra Sonho"], "cat_units": [0.42, 5.07, -2.07, -2.67, -5.0, 3.58, -1.0], "vit_saldo": 2.82, "vit_roi": 6.6, "vit_wr": 70, "vit_g": 30, "vit_r": 13, "tot_g": 30, "tot_r": 13, "tot_n": 43, "geral_u": 2.82};
 const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
 const br=(n,d=2)=>(n>=0?"+":"")+n.toFixed(d).replace(".",",");
 kSaldo.textContent=br(D.vit_saldo)+"u";kSaldo.style.color=D.vit_saldo>=0?G:R;
