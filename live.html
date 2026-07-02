@@ -4,13 +4,17 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial,sans-serif;padding:22px;max-width:1100px;margin:0 auto}
-.head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:16px;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:16px;margin-bottom:14px;flex-wrap:wrap;gap:10px}
 .logo{display:flex;align-items:center;gap:12px}
 .logo .b{width:38px;height:38px;border-radius:9px;background:#0E7490;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:20px}
 .t1{font-size:19px;font-weight:700;letter-spacing:.5px}.t2{font-size:12px;color:#22D3EE;letter-spacing:2px}
 .sub{font-size:12px;color:#9FB3C8;text-align:right}
-.live{display:inline-block;width:8px;height:8px;border-radius:50%;background:#34D399;margin-right:5px;box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:p 1.8s infinite}
+.live{display:inline-block;width:8px;height:8px;border-radius:50%;background:#34D399;margin-right:5px;animation:p 1.8s infinite}
 @keyframes p{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}70%{box-shadow:0 0 0 7px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#111A2B;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+.bar label{font-size:12px;color:#9FB3C8;letter-spacing:.5px}
+.bar select,.bar input[type=date]{background:#0A0E1A;color:#E5EDF5;border:1px solid rgba(34,211,238,.35);border-radius:8px;padding:7px 10px;font-size:13px;font-weight:600;outline:none;cursor:pointer;color-scheme:dark}
+.bar .info{font-size:12px;color:#22D3EE;margin-left:auto}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
 .kpi{background:#111A2B;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}
 .kpi.hl{border-color:rgba(34,211,238,.35)}
@@ -38,6 +42,20 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 </div>
 <div id="msg">Carregando dados ao vivo…</div>
 <div id="app" style="display:none">
+<div class="bar">
+  <label>PERÍODO:</label>
+  <select id="periodo">
+    <option value="tudo">Tudo</option>
+    <option value="7">Últimos 7 dias</option>
+    <option value="30">Últimos 30 dias</option>
+    <option value="3m">Últimos 3 meses</option>
+    <option value="atual">Mês atual</option>
+    <option value="passado">Mês passado</option>
+    <option value="custom">Personalizado</option>
+  </select>
+  <span id="cust" style="display:none">de <input type="date" id="de"> até <input type="date" id="ate"></span>
+  <span class="info" id="pinfo"></span>
+</div>
 <div class="kpis">
   <div class="kpi hl"><div class="k">SALDO PRINCIPAIS</div><div class="v green" id="kSaldo"></div></div>
   <div class="kpi"><div class="k">ROI PRINCIPAIS</div><div class="v cyan" id="kRoi"></div></div>
@@ -55,7 +73,7 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
     <div style="position:relative;height:220px"><canvas id="cDonut"></canvas></div></div>
 </div>
 <div class="cta">
-  <a class="pan" href="https://axoratips.github.io/axora-painel" target="_blank" rel="noopener">📊 Histórico completo</a>
+  <a class="pan" href="https://docs.google.com/spreadsheets/d/1esNUu54izfG-AKhIhwTcSsOjySW91bw-MyP1IGJMHOg/edit" target="_blank" rel="noopener">📊 Histórico completo (todos os palpites)</a>
   <a class="vip" href="https://t.me/+VFKOMWunX6Q1MGRh" target="_blank" rel="noopener">💎 Assinar o VIP (Fundador)</a>
 </div>
 </div>
@@ -63,76 +81,98 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 <div class="foot">+18 · Aposte com responsabilidade · gestão de banca em 1º lugar · by ÁXORA Sports Intelligence</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRh3rDAmod9q2CKfjLJ9rlGWtlDHvUrzvpuQuNFytFYAzfg-FzBxDIXGB4O5Xm2y1m6JsncVLqg0f9B/pub?gid=1893420352&single=true&output=csv";
-const PAINEL="https://axoratips.github.io/axora-painel", VIP="https://t.me/+VFKOMWunX6Q1MGRh";
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRh3rDAmod9q2CKfjLJ9rlGWtlDHvUrzvpuQuNFytFYAzfg-FzBxDIXGB4O5Xm2y1m6JsncVLqg0f9B/pub?gid=1893420352&single=true&output=csv", VIP="https://t.me/+VFKOMWunX6Q1MGRh";
 const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
 const CATS=[["Segura","Segura"],["Valor","Valor"],["Ousada","Ousada"],["Certeira","Certeira"],
             ["Forra Certeira","Forra Cert."],["Forra Equilibrada","Forra Equil."],["Forra Sonho","Forra Sonho"]];
+const MESES={"01":"Janeiro","02":"Fevereiro","03":"Março","04":"Abril","05":"Maio","06":"Junho",
+             "07":"Julho","08":"Agosto","09":"Setembro","10":"Outubro","11":"Novembro","12":"Dezembro"};
 const br=(n,d=2)=>(n>=0?"+":"")+Number(n).toFixed(d).replace(".",",");
 const num=s=>{if(s==null)return NaN;s=String(s).trim().replace(/\s/g,"").replace(/^\+/,"").replace(",",".");const v=parseFloat(s);return isNaN(v)?NaN:v;};
+let ALL=[], CH={};
 
-function parseCSV(t){
-  const rows=[];let f="",row=[],q=false;
+function parseCSV(t){const rows=[];let f="",row=[],q=false;
   for(let i=0;i<t.length;i++){const c=t[i];
-    if(q){ if(c=='"'){ if(t[i+1]=='"'){f+='"';i++;}else q=false;} else f+=c; }
-    else{ if(c=='"')q=true; else if(c==','){row.push(f);f="";} else if(c=='\n'){row.push(f);rows.push(row);row=[];f="";} else if(c=='\r'){} else f+=c; }
-  }
-  if(f.length||row.length){row.push(f);rows.push(row);}
-  return rows;
-}
-function toObjs(rows){
-  if(!rows.length)return[];
-  const h=rows[0].map(x=>x.trim());
-  return rows.slice(1).filter(r=>r.length>1&&r.some(v=>v.trim())).map(r=>{const o={};h.forEach((k,i)=>o[k]=(r[i]||"").trim());return o;});
+    if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else{if(c=='"')q=true;else if(c==','){row.push(f);f="";}else if(c=='\n'){row.push(f);rows.push(row);row=[];f="";}else if(c=='\r'){}else f+=c;}}
+  if(f.length||row.length){row.push(f);rows.push(row);}return rows;}
+function toObjs(rows){if(!rows.length)return[];const h=rows[0].map(x=>x.trim());
+  return rows.slice(1).filter(r=>r.length>1&&r.some(v=>v.trim())).map(r=>{const o={};h.forEach((k,i)=>o[k]=(r[i]||"").trim());return o;});}
+
+function aggregate(objs){
+  const graded=o=>o["Resultado"]==="Green"||o["Resultado"]==="Red";
+  const P=objs.filter(o=>o["Grupo"]==="Principal"&&graded(o));
+  const g=P.filter(o=>o["Resultado"]==="Green").length, r=P.filter(o=>o["Resultado"]==="Red").length;
+  const saldo=P.reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0);
+  const dias=[...new Set(P.map(o=>o["Data"]))].sort();
+  const pl=dias.map(d=>P.filter(o=>o["Data"]===d).reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0));
+  let run=0;const cum=pl.map(v=>{run+=v;return +run.toFixed(2);});
+  const cu=CATS.map(c=>objs.filter(o=>o["Categoria"]===c[0]&&graded(o)).reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0));
+  return {g,r,n:g+r,saldo:+saldo.toFixed(2),wr:(g+r)?100*g/(g+r):0,roi:(g+r)?100*saldo/(g+r):0,
+    labels:dias.map(d=>d.length>=10?d.slice(8,10)+"/"+d.slice(5,7):d),
+    pl:pl.map(v=>+v.toFixed(2)),cum,cat_labels:CATS.map(c=>c[1]),cat_units:cu.map(v=>+v.toFixed(2)),ndias:dias.length};
 }
 
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function range(sel){
+  const t=new Date();t.setHours(0,0,0,0);
+  if(sel==="7"){const c=new Date(t);c.setDate(c.getDate()-6);return[iso(c),iso(t)];}
+  if(sel==="30"){const c=new Date(t);c.setDate(c.getDate()-29);return[iso(c),iso(t)];}
+  if(sel==="3m"){const c=new Date(t);c.setDate(c.getDate()-89);return[iso(c),iso(t)];}
+  if(sel==="atual"){const c=new Date(t.getFullYear(),t.getMonth(),1),e=new Date(t.getFullYear(),t.getMonth()+1,0);return[iso(c),iso(e)];}
+  if(sel==="passado"){const c=new Date(t.getFullYear(),t.getMonth()-1,1),e=new Date(t.getFullYear(),t.getMonth(),0);return[iso(c),iso(e)];}
+  return null;
+}
+function filtro(objs,sel){
+  if(sel==="tudo")return objs;
+  if(sel==="custom"){const de=document.getElementById("de").value,ate=document.getElementById("ate").value;
+    return objs.filter(o=>{const d=o["Data"];return (!de||d>=de)&&(!ate||d<=ate);});}
+  const r=range(sel); if(!r)return objs;
+  return objs.filter(o=>o["Data"]>=r[0]&&o["Data"]<=r[1]);
+}
+
+function chart(id,cfg){if(CH[id])CH[id].destroy();CH[id]=new Chart(document.getElementById(id),cfg);}
 function render(D){
   document.getElementById("msg").style.display="none";
   document.getElementById("app").style.display="block";
   kSaldo.textContent=br(D.saldo)+"u";kSaldo.style.color=D.saldo>=0?G:R;
-  kRoi.textContent=br(D.roi,1)+"%";
+  kRoi.textContent=br(D.roi,1)+"%";kRoi.style.color=D.roi>=0?CY:R;
   kWr.textContent=Math.round(D.wr)+"%";kWrs.textContent=D.g+"G · "+D.r+"R";
   kTot.textContent=D.n;kTots.textContent=D.g+"G · "+D.r+"R";
   lg.textContent=D.g;lr.textContent=D.r;
   Chart.defaults.color=MUT;Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
-  new Chart(cDia,{type:'bar',data:{labels:D.labels,datasets:[{data:D.pl_dia,backgroundColor:D.pl_dia.map(v=>v>=0?G:R),borderRadius:4}]},
+  chart("cDia",{type:'bar',data:{labels:D.labels,datasets:[{data:D.pl,backgroundColor:D.pl.map(v=>v>=0?G:R),borderRadius:4}]},
    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
-  new Chart(cAcum,{type:'line',data:{labels:D.labels,datasets:[{data:D.cum,borderColor:CY,backgroundColor:'rgba(34,211,238,.15)',fill:true,tension:.35,pointBackgroundColor:CY,pointRadius:3}]},
+  chart("cAcum",{type:'line',data:{labels:D.labels,datasets:[{data:D.cum,borderColor:CY,backgroundColor:'rgba(34,211,238,.15)',fill:true,tension:.35,pointBackgroundColor:CY,pointRadius:3}]},
    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
-  new Chart(cCat,{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_units,backgroundColor:D.cat_units.map(v=>v>=0?G:R),borderRadius:4}]},
+  chart("cCat",{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_units,backgroundColor:D.cat_units.map(v=>v>=0?G:R),borderRadius:4}]},
    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:GRID}},y:{grid:{display:false}}}}});
-  new Chart(cDonut,{type:'doughnut',data:{labels:["Green","Red"],datasets:[{data:[D.g,D.r],backgroundColor:[G,R],borderColor:"#0A0E1A",borderWidth:2}]},
+  chart("cDonut",{type:'doughnut',data:{labels:["Green","Red"],datasets:[{data:[D.g,D.r],backgroundColor:[G,R],borderColor:"#0A0E1A",borderWidth:2}]},
    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
+  document.getElementById("pinfo").textContent=D.ndias+" dia(s) · "+D.n+" tips principais";
+}
+function apply(){
+  const sel=document.getElementById("periodo").value;
+  document.getElementById("cust").style.display = sel==="custom" ? "inline" : "none";
+  render(aggregate(filtro(ALL,sel)));
 }
 
-function aggregate(objs){
-  const isP=o=>o["Grupo"]==="Principal";
-  const graded=o=>o["Resultado"]==="Green"||o["Resultado"]==="Red";
-  const P=objs.filter(o=>isP(o)&&graded(o));
-  const g=P.filter(o=>o["Resultado"]==="Green").length, r=P.filter(o=>o["Resultado"]==="Red").length;
-  const saldo=P.reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0);
-  const dias=[...new Set(P.map(o=>o["Data"]))].sort();
-  const pl_dia=dias.map(d=>P.filter(o=>o["Data"]===d).reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0));
-  let run=0;const cum=pl_dia.map(v=>{run+=v;return +run.toFixed(2);});
-  const cat_units=CATS.map(c=>objs.filter(o=>o["Categoria"]===c[0]&&graded(o)).reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0));
-  return {g,r,n:g+r,saldo:+saldo.toFixed(2),wr:(g+r)?100*g/(g+r):0,roi:(g+r)?100*saldo/(g+r):0,
-    labels:dias.map(d=>d.length>=10?d.slice(8,10)+"/"+d.slice(5,7):d),
-    pl_dia:pl_dia.map(v=>+v.toFixed(2)),cum,
-    cat_labels:CATS.map(c=>c[1]),cat_units:cat_units.map(v=>+v.toFixed(2))};
+function montaPeriodo(objs){
+  const ds=objs.map(o=>o["Data"]).filter(Boolean).sort();
+  if(ds.length){document.getElementById("de").value=ds[0];document.getElementById("ate").value=ds[ds.length-1];}
+  const sel=document.getElementById("periodo"); sel.value="tudo"; sel.onchange=apply;
+  document.getElementById("de").onchange=apply; document.getElementById("ate").onchange=apply;
 }
 
 async function load(){
-  if(!CSV_URL||CSV_URL.indexOf("http")!==0){document.getElementById("msg").innerHTML="⚙️ Configure a URL do Google Sheet publicado em <b>config.json → google_sheets.csv_url</b>.";return;}
+  if(!CSV_URL||CSV_URL.indexOf("http")!==0){document.getElementById("msg").innerHTML="⚙️ Configure google_sheets.csv_url no config.json.";return;}
   try{
     const res=await fetch(CSV_URL,{cache:"no-store"});
-    const txt=await res.text();
-    const objs=toObjs(parseCSV(txt));
-    if(!objs.length){document.getElementById("msg").textContent="Planilha vazia ou sem dados ainda.";return;}
-    render(aggregate(objs));
+    ALL=toObjs(parseCSV(await res.text()));
+    if(!ALL.length){document.getElementById("msg").textContent="Planilha sem dados ainda.";return;}
+    montaPeriodo(ALL); apply();
     document.getElementById("upd").textContent="atualizado "+new Date().toLocaleString("pt-BR");
-  }catch(e){
-    document.getElementById("msg").innerHTML="Não consegui ler a planilha ao vivo.<br><small>"+e+"</small>";
-  }
+  }catch(e){document.getElementById("msg").innerHTML="Não consegui ler a planilha ao vivo.<br><small>"+e+"</small>";}
 }
 load();
 </script></body></html>
