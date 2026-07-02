@@ -115,12 +115,13 @@ function aggregate(objs){
 
 const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 function range(sel){
-  const t=new Date();t.setHours(0,0,0,0);
+  const now=new Date();now.setHours(0,0,0,0);
+  const t=new Date(now);t.setDate(t.getDate()-1);   // ancora rolling em ONTEM (o dia vigente ainda não tem resultado)
   if(sel==="7"){const c=new Date(t);c.setDate(c.getDate()-6);return[iso(c),iso(t)];}
   if(sel==="30"){const c=new Date(t);c.setDate(c.getDate()-29);return[iso(c),iso(t)];}
   if(sel==="3m"){const c=new Date(t);c.setDate(c.getDate()-89);return[iso(c),iso(t)];}
-  if(sel==="atual"){const c=new Date(t.getFullYear(),t.getMonth(),1),e=new Date(t.getFullYear(),t.getMonth()+1,0);return[iso(c),iso(e)];}
-  if(sel==="passado"){const c=new Date(t.getFullYear(),t.getMonth()-1,1),e=new Date(t.getFullYear(),t.getMonth(),0);return[iso(c),iso(e)];}
+  if(sel==="atual"){const c=new Date(now.getFullYear(),now.getMonth(),1),e=new Date(now.getFullYear(),now.getMonth()+1,0);return[iso(c),iso(e)];}
+  if(sel==="passado"){const c=new Date(now.getFullYear(),now.getMonth()-1,1),e=new Date(now.getFullYear(),now.getMonth(),0);return[iso(c),iso(e)];}
   return null;
 }
 function filtro(objs,sel){
