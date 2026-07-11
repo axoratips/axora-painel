@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ÁXORA · Sala de Controle (privado)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial,sans-serif;padding:22px;max-width:1100px;margin:0 auto}
+.aviso{background:rgba(224,161,6,.12);border:1px solid rgba(224,161,6,.55);color:#F5C563;border-radius:10px;padding:10px 14px;font-size:12.5px;margin-bottom:16px;font-weight:600}
+.head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:16px;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .b{width:38px;height:38px;border-radius:9px;background:#B45309;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:20px}
+.t1{font-size:19px;font-weight:700;letter-spacing:.5px}.t2{font-size:12px;color:#F5C563;letter-spacing:2px}
+.sub{font-size:12px;color:#9FB3C8;text-align:right}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:#111A2B;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}
+.kpi.hl{border-color:rgba(245,197,99,.35)}
+.kpi .k{font-size:11px;color:#9FB3C8;letter-spacing:.5px}
+.kpi .v{font-size:26px;font-weight:800;margin-top:2px}.kpi .s{font-size:11px;color:#9FB3C8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:12px}
+.card{background:#111A2B;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px}
+.card h3{font-size:13px;color:#C9D6E5;font-weight:600;margin-bottom:10px}
+table.rx{width:100%;font-size:13px;border-collapse:collapse}
+table.rx td{padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.06)}
+table.rx td:last-child{text-align:right;font-weight:700}
+.foot{font-size:11px;color:#64748B;margin-top:16px;text-align:center}
+.g{color:#34D399}.r{color:#F87171}
+@media(max-width:680px){.grid,.grid2{grid-template-columns:1fr}}
+</style></head><body>
+<div class="aviso">🔒 PRIVADO — sala de controle da ÁXORA. Esta página tem ROI e unidades. NÃO compartilhe esta URL.</div>
+<div class="head">
+  <div class="logo"><div class="b">Á</div><div>
+    <div class="t1">ÁXORA · Sala de Controle</div><div class="t2">USO INTERNO</div></div></div>
+  <div class="sub">Base: Principais (Seguras + Valor + Certeira)<br>atualizado 11/07/2026</div>
+</div>
+<div class="kpis">
+  <div class="kpi hl"><div class="k">SALDO (u)</div><div class="v" id="kSaldo"></div></div>
+  <div class="kpi"><div class="k">ROI</div><div class="v" id="kRoi"></div></div>
+  <div class="kpi"><div class="k">TAXA DE ACERTO</div><div class="v" id="kWr"></div><div class="s" id="kWrs"></div></div>
+  <div class="kpi"><div class="k">TIPS (principais)</div><div class="v" id="kTot"></div><div class="s" id="kTots"></div></div>
+</div>
+<div class="grid">
+  <div class="card"><h3>P/L por dia (u)</h3><div style="position:relative;height:200px"><canvas id="cDia"></canvas></div></div>
+  <div class="card"><h3>Curva acumulada (u)</h3><div style="position:relative;height:200px"><canvas id="cAcum"></canvas></div></div>
+</div>
+<div class="grid2">
+  <div class="card"><h3>Unidades por categoria (u)</h3><div style="position:relative;height:320px"><canvas id="cCat"></canvas></div></div>
+  <div class="card"><h3>RAIO-X</h3>
+    <table class="rx">
+      <tr><td>Odd média (principais)</td><td id="rOdd"></td></tr>
+      <tr><td>Melhor dia (u)</td><td class="g" id="rMax"></td></tr>
+      <tr><td>Pior dia (u)</td><td class="r" id="rMin"></td></tr>
+      <tr><td>Dias no positivo</td><td id="rPos"></td></tr>
+      <tr><td>Melhor categoria (ROI)</td><td id="rCat"></td></tr>
+      <tr><td>Tips registradas (todas)</td><td id="rAll"></td></tr>
+    </table>
+  </div>
+</div>
+<div class="foot">ÁXORA · Sports Intelligence — uso interno. O público vê só a taxa de acerto.</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "24/06", "25/06", "26/06", "28/06", "29/06", "30/06", "01/07", "02/07", "03/07", "04/07", "05/07", "06/07", "07/07", "09/07", "10/07"], "pl_dia": [2.52, -2.28, -1.02, -0.71, 1.07, -1.86, 3.86, -0.38, 0.72, 2.37, 1.94, 1.08, 0.62, 1.45, -0.79, -0.57, 0.46, 0.18, 1.15, 0.42, 1.36, 1.79, -0.6], "cum": [2.52, 0.24, -0.78, -1.49, -0.42, -2.28, 1.58, 1.2, 1.92, 4.29, 6.23, 7.31, 7.93, 9.38, 8.59, 8.02, 8.48, 8.66, 9.81, 10.23, 11.59, 13.38, 12.78], "cat_labels": ["Segura", "Valor", "Ousada", "Certeira", "Forra Cert.", "Forra Equil.", "Forra Sonho"], "cat_units": [2.9, 9.34, -14.25, 0.54, -2.75, 0.58, -3.0], "cat_roi": [16.1, 15.1, -32.4, 2.3, -25.0, 8.3, -100.0], "saldo": 12.78, "roi": 12.4, "wr": 76, "g": 78, "r": 25, "n": 103, "odd_media": 1.52, "melhor_dia": 3.86, "pior_dia": -2.28, "dias_pos": 15, "dias_tot": 23, "melhor_cat": "Segura", "tips_todas": 168};
+const G="#34D399",R="#F87171",AM="#F5C563",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
+const br=(n,d=2)=>(n>=0?"+":"")+Number(n).toFixed(d).replace(".",",");
+kSaldo.textContent=br(D.saldo)+"u";kSaldo.style.color=D.saldo>=0?G:R;
+kRoi.textContent=br(D.roi,1)+"%";kRoi.style.color=D.roi>=0?G:R;
+kWr.textContent=D.wr+"%";kWrs.textContent=D.g+"G · "+D.r+"R";
+kTot.textContent=D.n;kTots.textContent="odd média "+D.odd_media;
+rOdd.textContent=D.odd_media;
+rMax.textContent=br(D.melhor_dia);
+rMin.textContent=br(D.pior_dia);
+rPos.textContent=D.dias_pos+" de "+D.dias_tot;
+rCat.textContent=D.melhor_cat;
+rAll.textContent=D.tips_todas;
+Chart.defaults.color=MUT;Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
+new Chart(cDia,{type:'bar',data:{labels:D.labels,datasets:[{data:D.pl_dia,backgroundColor:D.pl_dia.map(v=>v>=0?G:R),borderRadius:4}]},
+ options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
+new Chart(cAcum,{type:'line',data:{labels:D.labels,datasets:[{data:D.cum,borderColor:AM,backgroundColor:'rgba(245,197,99,.15)',fill:true,tension:.35,pointBackgroundColor:AM,pointRadius:3}]},
+ options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
+new Chart(cCat,{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_units,backgroundColor:D.cat_units.map(v=>v>=0?G:R),borderRadius:4}]},
+ options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+   tooltip:{callbacks:{label:(c)=>br(c.raw)+"u · ROI "+br(D.cat_roi[c.dataIndex],1)+"%"}}},
+   scales:{x:{grid:{color:GRID}},y:{grid:{display:false}}}}});
+</script></body></html>
