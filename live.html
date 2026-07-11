@@ -20,7 +20,7 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 .kpi.hl{border-color:rgba(34,211,238,.35)}
 .kpi .k{font-size:11px;color:#9FB3C8;letter-spacing:.5px}
 .kpi .v{font-size:26px;font-weight:800;margin-top:2px}.kpi .s{font-size:11px;color:#9FB3C8}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
 .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:12px}
 .card{background:#111A2B;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px}
 .card h3{font-size:13px;color:#C9D6E5;font-weight:600;margin-bottom:10px}
@@ -63,11 +63,13 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
   <div class="kpi"><div class="k">TIPS REGISTRADAS</div><div class="v" id="kTot"></div><div class="s" id="kTots"></div></div>
 </div>
 <div class="grid">
-  <div class="card"><h3>Saldo de acertos por dia (green − red)</h3><div style="position:relative;height:200px"><canvas id="cDia"></canvas></div></div>
-  <div class="card"><h3>Acertos acumulados — Principais</h3><div style="position:relative;height:200px"><canvas id="cAcum"></canvas></div></div>
+  <div class="card"><h3>Green × Red por dia</h3><div style="position:relative;height:230px"><canvas id="cDia"></canvas></div></div>
+  <div class="card"><h3>Acertos acumulados — Principais</h3><div style="position:relative;height:230px"><canvas id="cAcum"></canvas></div></div>
 </div>
 <div class="grid2">
-  <div class="card"><h3>Taxa de acerto por categoria (%)</h3><div style="position:relative;height:320px"><canvas id="cCat"></canvas></div></div>
+  <div class="card"><h3>Taxa de acerto por categoria (%)</h3>
+    <div class="leg"><span><i style="background:#34D399"></i>50% ou mais de acerto</span><span><i style="background:#F59E0B"></i>abaixo de 50%</span></div>
+    <div style="position:relative;height:320px"><canvas id="cCat"></canvas></div></div>
   <div class="card"><h3>Green vs Red — Principais</h3>
     <div class="leg"><span><i style="background:#34D399"></i>Green <b id="lg"></b></span><span><i style="background:#F87171"></i>Red <b id="lr"></b></span></div>
     <div style="position:relative;height:220px"><canvas id="cDonut"></canvas></div></div>
@@ -84,7 +86,7 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRR5GRj28lK-2_AoidcxscLU7bVtcOXEYDR3jFTNwHx61r2qXBxzBfwyQ0XQC8YhmewtBnSEJchAMLJ/pub?gid=1893420352&single=true&output=csv", VIP="https://axoratips.com";
 const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
 const CATS=[["Segura","Segura"],["Valor","Valor"],["Ousada","Ousada"],["Certeira","Certeira"],
-            ["Forra Certeira","Forra Cert."],["Forra Equilibrada","Forra Equil."],["Forra Sonho","Forra Sonho"]];
+            ["Cartada Certeira","Cartada Cert."],["Cartada Equilibrada","Cartada Equil."],["Cartada Sonho","Cartada Sonho"]];
 const MESES={"01":"Janeiro","02":"Fevereiro","03":"Março","04":"Abril","05":"Maio","06":"Junho",
              "07":"Julho","08":"Agosto","09":"Setembro","10":"Outubro","11":"Novembro","12":"Dezembro"};
 const br=(n,d=2)=>(n>=0?"+":"")+Number(n).toFixed(d).replace(".",",");
@@ -113,7 +115,7 @@ function aggregate(objs){
     return (cg+cr)?Math.round(100*cg/(cg+cr)):0;});
   return {g,r,n:g+r,wr:(g+r)?100*g/(g+r):0,
     labels:dias.map(d=>d.length>=10?d.slice(8,10)+"/"+d.slice(5,7):d),
-    net,cum,cat_labels:CATS.map(c=>c[1]),cat_wr:cwr,ndias:dias.length};
+    gd,rd:rday,net,cum,cat_labels:CATS.map(c=>c[1]),cat_wr:cwr,ndias:dias.length};
 }
 
 const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
@@ -145,8 +147,14 @@ function render(D){
   kTot.textContent=D.n;kTots.textContent=D.g+"G · "+D.r+"R";
   lg.textContent=D.g;lr.textContent=D.r;
   Chart.defaults.color=MUT;Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
-  chart("cDia",{type:'bar',data:{labels:D.labels,datasets:[{data:D.net,backgroundColor:D.net.map(v=>v>=0?G:R),borderRadius:4}]},
-   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
+  chart("cDia",{type:'bar',data:{labels:D.labels,datasets:[
+      {label:'Green',data:D.gd,backgroundColor:G,borderRadius:3},
+      {label:'Red',data:D.rd.map(v=>-v),backgroundColor:R,borderRadius:3}]},
+   options:{responsive:true,maintainAspectRatio:false,
+     plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,padding:14}},
+       tooltip:{callbacks:{label:(c)=>c.dataset.label+": "+Math.abs(c.raw)}}},
+     scales:{x:{stacked:true,grid:{display:false}},
+       y:{stacked:true,grid:{color:GRID},ticks:{callback:(v)=>Math.abs(v)}}}}});
   chart("cAcum",{type:'line',data:{labels:D.labels,datasets:[{data:D.cum,borderColor:CY,backgroundColor:'rgba(34,211,238,.15)',fill:true,tension:.35,pointBackgroundColor:CY,pointRadius:3}]},
    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
   chart("cCat",{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_wr,backgroundColor:D.cat_wr.map(v=>v>=50?G:'#F59E0B'),borderRadius:4}]},
