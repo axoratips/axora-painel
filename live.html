@@ -57,31 +57,31 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
   <span class="info" id="pinfo"></span>
 </div>
 <div class="kpis">
-  <div class="kpi hl"><div class="k">SALDO PRINCIPAIS</div><div class="v green" id="kSaldo"></div></div>
-  <div class="kpi"><div class="k">ROI PRINCIPAIS</div><div class="v cyan" id="kRoi"></div></div>
-  <div class="kpi"><div class="k">WINRATE PRINCIPAIS</div><div class="v" id="kWr"></div><div class="s" id="kWrs"></div></div>
+  <div class="kpi hl"><div class="k">TAXA DE ACERTO</div><div class="v green" id="kWr"></div><div class="s" id="kWrs"></div></div>
+  <div class="kpi"><div class="k">GREEN</div><div class="v green" id="kSaldo"></div></div>
+  <div class="kpi"><div class="k">RED</div><div class="v" id="kRoi" style="color:#F87171"></div></div>
   <div class="kpi"><div class="k">TIPS REGISTRADAS</div><div class="v" id="kTot"></div><div class="s" id="kTots"></div></div>
 </div>
 <div class="grid">
-  <div class="card"><h3>P/L por dia (u)</h3><div style="position:relative;height:200px"><canvas id="cDia"></canvas></div></div>
-  <div class="card"><h3>Curva acumulada — Principais (u)</h3><div style="position:relative;height:200px"><canvas id="cAcum"></canvas></div></div>
+  <div class="card"><h3>Saldo de acertos por dia (green − red)</h3><div style="position:relative;height:200px"><canvas id="cDia"></canvas></div></div>
+  <div class="card"><h3>Acertos acumulados — Principais</h3><div style="position:relative;height:200px"><canvas id="cAcum"></canvas></div></div>
 </div>
 <div class="grid2">
-  <div class="card"><h3>Desempenho por categoria (u)</h3><div style="position:relative;height:320px"><canvas id="cCat"></canvas></div></div>
+  <div class="card"><h3>Taxa de acerto por categoria (%)</h3><div style="position:relative;height:320px"><canvas id="cCat"></canvas></div></div>
   <div class="card"><h3>Green vs Red — Principais</h3>
     <div class="leg"><span><i style="background:#34D399"></i>Green <b id="lg"></b></span><span><i style="background:#F87171"></i>Red <b id="lr"></b></span></div>
     <div style="position:relative;height:220px"><canvas id="cDonut"></canvas></div></div>
 </div>
 <div class="cta">
-  <a class="pan" href="https://docs.google.com/spreadsheets/d/1esNUu54izfG-AKhIhwTcSsOjySW91bw-MyP1IGJMHOg/edit" target="_blank" rel="noopener">📊 Histórico completo (todos os palpites)</a>
+  <a class="pan" href="https://docs.google.com/spreadsheets/d/1eVehtA95PHUhT8UZ_DHbo_Ol8NM_teSJWa-Z0czYn5Q/edit" target="_blank" rel="noopener">📊 Histórico completo (todos os palpites)</a>
   <a class="vip" href="https://axoratips.com" target="_blank" rel="noopener">💎 Assinar o VIP (Fundador)</a>
 </div>
 </div>
-<div class="note">* Saldo, ROI, winrate, tips, P/L por dia e green×red consideram as <b>Principais</b> (Seguras, Valor e Certeira). Ousadas e Forras aparecem só no gráfico por categoria.</div>
+<div class="note">* Taxa de acerto, tips, saldo de acertos por dia e green×red consideram as <b>Principais</b> (Seguras, Valor e Certeira). ÁXORA é análise/orientação — a métrica é a <b>taxa de acerto</b>, e você decide onde entrar.</div>
 <div class="foot">+18 · Aposte com responsabilidade · gestão de banca em 1º lugar · by ÁXORA Sports Intelligence</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRh3rDAmod9q2CKfjLJ9rlGWtlDHvUrzvpuQuNFytFYAzfg-FzBxDIXGB4O5Xm2y1m6JsncVLqg0f9B/pub?gid=1893420352&single=true&output=csv", VIP="https://axoratips.com";
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRR5GRj28lK-2_AoidcxscLU7bVtcOXEYDR3jFTNwHx61r2qXBxzBfwyQ0XQC8YhmewtBnSEJchAMLJ/pub?gid=1893420352&single=true&output=csv", VIP="https://axoratips.com";
 const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
 const CATS=[["Segura","Segura"],["Valor","Valor"],["Ousada","Ousada"],["Certeira","Certeira"],
             ["Forra Certeira","Forra Cert."],["Forra Equilibrada","Forra Equil."],["Forra Sonho","Forra Sonho"]];
@@ -103,14 +103,17 @@ function aggregate(objs){
   const graded=o=>o["Resultado"]==="Green"||o["Resultado"]==="Red";
   const P=objs.filter(o=>o["Grupo"]==="Principal"&&graded(o));
   const g=P.filter(o=>o["Resultado"]==="Green").length, r=P.filter(o=>o["Resultado"]==="Red").length;
-  const saldo=P.reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0);
   const dias=[...new Set(P.map(o=>o["Data"]))].sort();
-  const pl=dias.map(d=>P.filter(o=>o["Data"]===d).reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0));
-  let run=0;const cum=pl.map(v=>{run+=v;return +run.toFixed(2);});
-  const cu=CATS.map(c=>objs.filter(o=>o["Categoria"]===c[0]&&graded(o)).reduce((s,o)=>s+(num(o["Lucro (u)"])||0),0));
-  return {g,r,n:g+r,saldo:+saldo.toFixed(2),wr:(g+r)?100*g/(g+r):0,roi:(g+r)?100*saldo/(g+r):0,
+  const gd=dias.map(d=>P.filter(o=>o["Data"]===d&&o["Resultado"]==="Green").length);
+  const rday=dias.map(d=>P.filter(o=>o["Data"]===d&&o["Resultado"]==="Red").length);
+  const net=gd.map((v,i)=>v-rday[i]);                    // saldo de acertos do dia (green - red)
+  let run=0;const cum=net.map(v=>{run+=v;return run;});   // acertos acumulados
+  const cwr=CATS.map(c=>{const s=objs.filter(o=>o["Categoria"]===c[0]&&graded(o));
+    const cg=s.filter(o=>o["Resultado"]==="Green").length,cr=s.filter(o=>o["Resultado"]==="Red").length;
+    return (cg+cr)?Math.round(100*cg/(cg+cr)):0;});
+  return {g,r,n:g+r,wr:(g+r)?100*g/(g+r):0,
     labels:dias.map(d=>d.length>=10?d.slice(8,10)+"/"+d.slice(5,7):d),
-    pl:pl.map(v=>+v.toFixed(2)),cum,cat_labels:CATS.map(c=>c[1]),cat_units:cu.map(v=>+v.toFixed(2)),ndias:dias.length};
+    net,cum,cat_labels:CATS.map(c=>c[1]),cat_wr:cwr,ndias:dias.length};
 }
 
 const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
@@ -136,17 +139,17 @@ function chart(id,cfg){if(CH[id])CH[id].destroy();CH[id]=new Chart(document.getE
 function render(D){
   document.getElementById("msg").style.display="none";
   document.getElementById("app").style.display="block";
-  kSaldo.textContent=br(D.saldo)+"u";kSaldo.style.color=D.saldo>=0?G:R;
-  kRoi.textContent=br(D.roi,1)+"%";kRoi.style.color=D.roi>=0?CY:R;
-  kWr.textContent=Math.round(D.wr)+"%";kWrs.textContent=D.g+"G · "+D.r+"R";
+  kWr.textContent=Math.round(D.wr)+"%";kWrs.textContent="em "+D.n+" tips";
+  kSaldo.textContent=D.g;
+  kRoi.textContent=D.r;
   kTot.textContent=D.n;kTots.textContent=D.g+"G · "+D.r+"R";
   lg.textContent=D.g;lr.textContent=D.r;
   Chart.defaults.color=MUT;Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
-  chart("cDia",{type:'bar',data:{labels:D.labels,datasets:[{data:D.pl,backgroundColor:D.pl.map(v=>v>=0?G:R),borderRadius:4}]},
+  chart("cDia",{type:'bar',data:{labels:D.labels,datasets:[{data:D.net,backgroundColor:D.net.map(v=>v>=0?G:R),borderRadius:4}]},
    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
   chart("cAcum",{type:'line',data:{labels:D.labels,datasets:[{data:D.cum,borderColor:CY,backgroundColor:'rgba(34,211,238,.15)',fill:true,tension:.35,pointBackgroundColor:CY,pointRadius:3}]},
    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
-  chart("cCat",{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_units,backgroundColor:D.cat_units.map(v=>v>=0?G:R),borderRadius:4}]},
+  chart("cCat",{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_wr,backgroundColor:D.cat_wr.map(v=>v>=50?G:'#F59E0B'),borderRadius:4}]},
    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:GRID}},y:{grid:{display:false}}}}});
   chart("cDonut",{type:'doughnut',data:{labels:["Green","Red"],datasets:[{data:[D.g,D.r],backgroundColor:[G,R],borderColor:"#0A0E1A",borderWidth:2}]},
    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
