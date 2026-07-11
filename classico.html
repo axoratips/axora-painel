@@ -15,6 +15,7 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 .kpi .k{font-size:11px;color:#9FB3C8;letter-spacing:.5px}
 .kpi .v{font-size:26px;font-weight:800;margin-top:2px}.kpi .s{font-size:11px;color:#9FB3C8}
 .grid{display:grid;grid-template-columns:1fr;gap:12px}
+.notac{font-size:12px;color:#9FB3C8;line-height:1.5;margin:-2px 0 10px;background:rgba(245,197,99,.07);border-left:2px solid rgba(245,197,99,.5);padding:8px 10px}
 .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:12px}
 .card{background:#111A2B;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px}
 .card h3{font-size:13px;color:#C9D6E5;font-weight:600;margin-bottom:10px}
@@ -41,18 +42,21 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
   <div class="card"><h3>Acertos acumulados — Principais</h3><div style="position:relative;height:230px"><canvas id="cAcum" role="img" aria-label="Acertos acumulados"></canvas></div></div>
 </div>
 <div class="grid2">
-  <div class="card"><h3>Taxa de acerto por categoria (%)</h3>
-    <div class="leg"><span><i style="background:#34D399"></i>50% ou mais de acerto</span><span><i style="background:#F59E0B"></i>abaixo de 50%</span></div>
-    <div style="position:relative;height:320px"><canvas id="cCat" role="img" aria-label="Taxa de acerto por categoria"></canvas></div></div>
+  <div class="card"><h3>Green × Red por categoria</h3>
+    <div class="leg"><span><i style="background:#34D399"></i>Green</span><span><i style="background:#F87171"></i>Red</span></div>
+    <div style="position:relative;height:250px"><canvas id="cCat" role="img" aria-label="Green e red por categoria"></canvas></div></div>
   <div class="card"><h3>Green vs Red — Principais</h3>
     <div class="leg"><span><i style="background:#34D399"></i>Green <b id="lg"></b></span><span><i style="background:#F87171"></i>Red <b id="lr"></b></span></div>
     <div style="position:relative;height:220px"><canvas id="cDonut" role="img" aria-label="Green vs red da vitrine"></canvas></div></div>
 </div>
+<div class="card" style="margin-top:12px"><h3>Cartadas — resultado em unidades</h3>
+  <div class="notac">Na Cartada (a múltipla), <b>1 acerto paga vários erros</b> — por isso ela é medida em <b>unidades</b>, e não em taxa de acerto. Uma Cartada pode acertar 15% dos dias e ainda assim estar no positivo.</div>
+  <div style="position:relative;height:190px"><canvas id="cCart" role="img" aria-label="Cartadas em unidades"></canvas></div></div>
 <div class="note">* Taxa de acerto, tips, saldo de acertos por dia e green×red consideram as entradas <b>Seguras, Valor e Certeira</b>. ÁXORA é análise/orientação — a métrica é a taxa de acerto, e você decide onde entrar.</div>
 <div class="foot">+18 · Aposte com responsabilidade · gestão de banca em 1º lugar · by ÁXORA Sports Intelligence</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "24/06", "25/06", "26/06", "28/06", "29/06", "30/06", "01/07", "02/07", "03/07", "04/07", "05/07", "06/07", "07/07", "09/07", "10/07"], "net_dia": [4, -2, 0, 2, 2, -1, 8, 1, 3, 7, 8, 3, 2, 3, 0, 0, 2, 1, 2, 1, 2, 5, 0], "vit_cum": [4, 2, 2, 4, 6, 5, 13, 14, 17, 24, 32, 35, 37, 40, 40, 40, 42, 43, 45, 46, 48, 53, 53], "gd_dia": [4, 1, 2, 5, 3, 2, 8, 3, 5, 8, 10, 3, 2, 3, 2, 1, 3, 1, 2, 1, 2, 6, 1], "rd_dia": [0, 3, 2, 3, 1, 3, 0, 2, 2, 1, 2, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0, 1, 1], "cat_labels": ["Seguras", "Valor", "Ousadas", "Certeira", "Cartada Cert.", "Cartada Equil.", "Cartada Sonho"], "cat_wr": [89, 71, 30, 78, 18, 14, 0], "vit_wr": 76, "vit_g": 78, "vit_r": 25, "tot_g": 78, "tot_r": 25, "tot_n": 103};
+const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "24/06", "25/06", "26/06", "28/06", "29/06", "30/06", "01/07", "02/07", "03/07", "04/07", "05/07", "06/07", "07/07", "09/07", "10/07"], "net_dia": [4, -2, 0, 2, 2, -1, 8, 1, 3, 7, 8, 3, 2, 3, 0, 0, 2, 1, 2, 1, 2, 5, 0], "vit_cum": [4, 2, 2, 4, 6, 5, 13, 14, 17, 24, 32, 35, 37, 40, 40, 40, 42, 43, 45, 46, 48, 53, 53], "gd_dia": [4, 1, 2, 5, 3, 2, 8, 3, 5, 8, 10, 3, 2, 3, 2, 1, 3, 1, 2, 1, 2, 6, 1], "rd_dia": [0, 3, 2, 3, 1, 3, 0, 2, 2, 1, 2, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0, 1, 1], "cat_labels": ["Seguras", "Valor", "Certeira", "Ousadas"], "cat_g": [16, 44, 18, 13], "cat_r": [2, 18, 5, 31], "cart_labels": ["Cartada Cert.", "Cartada Equil.", "Cartada Sonho"], "cart_u": [-2.75, 0.58, -3.0], "cart_g": [2, 1, 0], "cart_r": [9, 6, 3], "vit_wr": 76, "vit_g": 78, "vit_r": 25, "tot_g": 78, "tot_r": 25, "tot_n": 103};
 const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
 const br=(n,d=2)=>(n>=0?"+":"")+n.toFixed(d).replace(".",",");
 kWr.textContent=Math.round(D.vit_wr)+"%";kWrs.textContent="em "+D.tot_n+" tips";
@@ -71,8 +75,19 @@ new Chart(cDia,{type:'bar',data:{labels:D.labels,datasets:[
      y:{stacked:true,grid:{color:GRID},ticks:{callback:(v)=>Math.abs(v)}}}}});
 new Chart(cAcum,{type:'line',data:{labels:D.labels,datasets:[{data:D.vit_cum,borderColor:CY,backgroundColor:'rgba(34,211,238,.15)',fill:true,tension:.35,pointBackgroundColor:CY,pointRadius:3}]},
  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:GRID}}}}});
-new Chart(cCat,{type:'bar',data:{labels:D.cat_labels,datasets:[{data:D.cat_wr,backgroundColor:D.cat_wr.map(v=>v>=50?G:'#F59E0B'),borderRadius:4}]},
- options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:GRID}},y:{grid:{display:false}}}}});
+new Chart(cCat,{type:'bar',data:{labels:D.cat_labels,datasets:[
+   {label:'Green',data:D.cat_g,backgroundColor:G},
+   {label:'Red',data:D.cat_r,backgroundColor:R}]},
+ options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+   plugins:{legend:{display:false},
+     tooltip:{callbacks:{afterBody:(it)=>{const i=it[0].dataIndex,t=D.cat_g[i]+D.cat_r[i];
+       return t?("Acerto: "+Math.round(100*D.cat_g[i]/t)+"%"):"";}}}},
+   scales:{x:{stacked:true,grid:{color:GRID}},y:{stacked:true,grid:{display:false}}}}});
+new Chart(cCart,{type:'bar',data:{labels:D.cart_labels,datasets:[{data:D.cart_u,backgroundColor:D.cart_u.map(v=>v>=0?G:R),borderRadius:4}]},
+ options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+   plugins:{legend:{display:false},
+     tooltip:{callbacks:{label:(c)=>br(c.raw)+"u  ("+D.cart_g[c.dataIndex]+"G / "+D.cart_r[c.dataIndex]+"R)"}}},
+   scales:{x:{grid:{color:GRID},ticks:{callback:(v)=>v+"u"}},y:{grid:{display:false}}}}});
 new Chart(cDonut,{type:'doughnut',data:{labels:["Green","Red"],datasets:[{data:[D.vit_g,D.vit_r],backgroundColor:[G,R],borderColor:"#0A0E1A",borderWidth:2}]},
  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
 </script></body></html>
