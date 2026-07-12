@@ -31,7 +31,7 @@ table.rx td:last-child{text-align:right;font-weight:700}
 <div class="head">
   <div class="logo"><div class="b">Á</div><div>
     <div class="t1">ÁXORA · Sala de Controle</div><div class="t2">USO INTERNO</div></div></div>
-  <div class="sub">Base: Principais (Seguras + Valor + Certeira)<br>atualizado 11/07/2026</div>
+  <div class="sub">Base: Principais (Seguras + Valor + Certeira)<br>atualizado 12/07/2026</div>
 </div>
 <div class="kpis">
   <div class="kpi hl"><div class="k">SALDO (u)</div><div class="v" id="kSaldo"></div></div>
@@ -59,7 +59,7 @@ table.rx td:last-child{text-align:right;font-weight:700}
 <div class="foot">ÁXORA · Sports Intelligence — uso interno. O público vê só a taxa de acerto.</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "24/06", "25/06", "26/06", "28/06", "29/06", "30/06", "01/07", "02/07", "03/07", "04/07", "05/07", "06/07", "07/07", "09/07", "10/07"], "pl_dia": [2.52, -2.28, -1.02, -0.71, 1.07, -1.86, 3.86, -0.38, 0.72, 2.37, 1.94, 1.08, 0.62, 1.45, -0.79, -0.57, 0.46, 0.18, 1.15, 0.42, 1.36, 1.79, -0.6], "cum": [2.52, 0.24, -0.78, -1.49, -0.42, -2.28, 1.58, 1.2, 1.92, 4.29, 6.23, 7.31, 7.93, 9.38, 8.59, 8.02, 8.48, 8.66, 9.81, 10.23, 11.59, 13.38, 12.78], "cat_labels": ["Segura", "Valor", "Ousada", "Certeira", "Cartada Cert.", "Cartada Equil.", "Cartada Sonho"], "cat_units": [2.9, 9.34, -14.25, 0.54, -2.75, 0.58, -3.0], "cat_roi": [16.1, 15.1, -32.4, 2.3, -25.0, 8.3, -100.0], "saldo": 12.78, "roi": 12.4, "wr": 76, "g": 78, "r": 25, "n": 103, "odd_media": 1.52, "melhor_dia": 3.86, "pior_dia": -2.28, "dias_pos": 15, "dias_tot": 23, "melhor_cat": "Segura", "tips_todas": 168};
+const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "24/06", "25/06", "26/06", "28/06", "29/06", "30/06", "01/07", "02/07", "03/07", "04/07", "05/07", "06/07", "07/07", "09/07", "10/07", "11/07"], "pl_dia": [2.52, -2.28, -1.02, -0.71, 1.07, -1.86, 3.86, -0.38, 0.72, 2.37, 1.94, 1.08, 0.62, 1.45, -0.79, -0.57, -1.15, 0.18, 1.15, 0.42, 1.36, 1.79, -0.6, 0.32], "cum": [2.52, 0.24, -0.78, -1.49, -0.42, -2.28, 1.58, 1.2, 1.92, 4.29, 6.23, 7.31, 7.93, 9.38, 8.59, 8.02, 6.87, 7.05, 8.2, 8.62, 9.98, 11.77, 11.17, 11.49], "cat_labels": ["Segura", "Valor", "Ousada", "Certeira", "Cartada Cert.", "Cartada Equil.", "Cartada Sonho"], "cat_units": [2.9, 7.68, -14.25, 0.91, -5.75, -0.42, -4.0], "cat_roi": [16.1, 12.0, -31.0, 3.8, -41.1, -5.2, -100.0], "saldo": 11.49, "roi": 10.8, "wr": 74, "g": 79, "r": 27, "n": 106, "odd_media": 1.53, "melhor_dia": 3.86, "pior_dia": -2.28, "dias_pos": 15, "dias_tot": 24, "melhor_cat": "Segura", "tips_todas": 178};
 const G="#34D399",R="#F87171",AM="#F5C563",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
 const br=(n,d=2)=>(n>=0?"+":"")+Number(n).toFixed(d).replace(".",",");
 kSaldo.textContent=br(D.saldo)+"u";kSaldo.style.color=D.saldo>=0?G:R;
