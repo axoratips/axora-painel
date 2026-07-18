@@ -28,7 +28,7 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 <div class="head">
   <div class="logo"><div class="b">Á</div><div>
     <div class="t1">ÁXORA · Painel de Desempenho</div><div class="t2">SPORTS INTELLIGENCE</div></div></div>
-  <div class="sub">Transparência total · green e red registrados<br>atualizado 17/07/2026</div>
+  <div class="sub">Transparência total · green e red registrados<br>atualizado 18/07/2026</div>
 </div>
 <div class="kpis">
   <div class="kpi hl"><div class="k">TAXA DE ACERTO</div><div class="v green" id="kWr"></div><div class="s" id="kWrs"></div></div>
@@ -52,7 +52,7 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
 <div class="foot">+18 · Aposte com responsabilidade · gestão de banca em 1º lugar · by ÁXORA Sports Intelligence</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "24/06", "25/06", "26/06", "28/06", "29/06", "30/06", "01/07", "02/07", "03/07", "04/07", "05/07", "06/07", "07/07", "09/07", "10/07", "11/07", "12/07", "13/07", "14/07", "15/07", "16/07"], "net_dia": [4, -2, 0, 2, 2, -1, 8, 1, 3, 7, 8, 3, 2, 3, 0, 0, 0, 1, 2, 1, 2, 5, 0, 1, 2, 1, 0, 2, -2], "vit_cum": [4, 2, 2, 4, 6, 5, 13, 14, 17, 24, 32, 35, 37, 40, 40, 40, 40, 41, 43, 44, 46, 51, 51, 52, 54, 55, 55, 57, 55], "gd_dia": [4, 1, 2, 5, 3, 2, 8, 3, 5, 8, 10, 3, 2, 3, 2, 1, 2, 1, 2, 1, 2, 6, 1, 2, 4, 2, 3, 5, 3], "rd_dia": [0, 3, 2, 3, 1, 3, 0, 2, 2, 1, 2, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 1, 1, 1, 2, 1, 3, 3, 5], "cat_labels": ["Seguras", "Valor", "Certeira", "Ousadas"], "cat_g": [19, 55, 22, 15], "cat_r": [2, 32, 7, 43], "vit_wr": 70, "vit_g": 96, "vit_r": 41, "tot_g": 96, "tot_r": 41, "tot_n": 137};
+const D={"labels": ["16/06", "17/06", "18/06", "19/06", "20/06", "21/06", "22/06", "23/06", "24/06", "25/06", "26/06", "28/06", "29/06", "30/06", "01/07", "02/07", "03/07", "04/07", "05/07", "06/07", "07/07", "09/07", "10/07", "11/07", "12/07", "13/07", "14/07", "15/07", "16/07", "17/07"], "net_dia": [4, -2, 0, 2, 2, -1, 8, 1, 3, 7, 8, 3, 2, 3, 0, 0, 0, 1, 2, 1, 2, 5, 0, 1, 2, 1, 0, 2, -2, 0], "vit_cum": [4, 2, 2, 4, 6, 5, 13, 14, 17, 24, 32, 35, 37, 40, 40, 40, 40, 41, 43, 44, 46, 51, 51, 52, 54, 55, 55, 57, 55, 55], "gd_dia": [4, 1, 2, 5, 3, 2, 8, 3, 5, 8, 10, 3, 2, 3, 2, 1, 2, 1, 2, 1, 2, 6, 1, 2, 4, 2, 3, 5, 3, 3], "rd_dia": [0, 3, 2, 3, 1, 3, 0, 2, 2, 1, 2, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 1, 1, 1, 2, 1, 3, 3, 5, 3], "cat_labels": ["Seguras", "Valor", "Certeira", "Ousadas"], "cat_g": [20, 56, 23, 15], "cat_r": [2, 35, 7, 44], "vit_wr": 69, "vit_g": 99, "vit_r": 44, "tot_g": 99, "tot_r": 44, "tot_n": 143};
 const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
 const br=(n,d=2)=>(n>=0?"+":"")+n.toFixed(d).replace(".",",");
 kWr.textContent=Math.round(D.vit_wr)+"%";kWrs.textContent="em "+D.tot_n+" tips";
