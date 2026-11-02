@@ -79,13 +79,16 @@ body{background:#0A0E1A;color:#E5EDF5;font-family:'Segoe UI',-apple-system,Arial
   <a class="vip" href="https://axoratips.com" target="_blank" rel="noopener">💎 Assinar o VIP (Fundador)</a>
 </div>
 </div>
-<div class="note">* Taxa de acerto, tips, green×red por dia e por categoria consideram as <b>Principais</b> (Seguras, Valor e Certeira) e as Ousadas. As <b>Cartadas</b> (múltiplas) são recreativas e ficam <b>fora desta amostragem</b> — continuam no card e no histórico. ÁXORA é análise/orientação — a métrica é a <b>taxa de acerto</b>, e você decide onde entrar.</div>
+<div class="note">* Taxa de acerto, tips, green×red por dia e por categoria consideram as <b>Principais</b> (Seguras e Moderadas) e as Ousadas. ÁXORA é análise/orientação — a métrica é a <b>taxa de acerto</b>, e você decide onde entrar.</div>
 <div class="foot">+18 · Aposte com responsabilidade · gestão de banca em 1º lugar · by ÁXORA Sports Intelligence</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRR5GRj28lK-2_AoidcxscLU7bVtcOXEYDR3jFTNwHx61r2qXBxzBfwyQ0XQC8YhmewtBnSEJchAMLJ/pub?gid=1893420352&single=true&output=csv", VIP="https://axoratips.com";
 const G="#34D399",R="#F87171",CY="#22D3EE",MUT="#9FB3C8",GRID="rgba(255,255,255,.06)";
-const CATS=[["Segura","Segura"],["Valor","Valor"],["Certeira","Certeira"],["Ousada","Ousada"]];
+const CATS=[["Segura", "Segura"], ["Moderada", "Moderada"], ["Ousada", "Ousada"]];
+// o Sheet antigo gravava "Valor"; desde 02/11/2026 é "Moderada" — os dois contam
+const ALIAS={"Valor":"Moderada"};
+const catDe=o=>ALIAS[o["Categoria"]]||o["Categoria"];
 const MESES={"01":"Janeiro","02":"Fevereiro","03":"Março","04":"Abril","05":"Maio","06":"Junho",
              "07":"Julho","08":"Agosto","09":"Setembro","10":"Outubro","11":"Novembro","12":"Dezembro"};
 const br=(n,d=2)=>(n>=0?"+":"")+Number(n).toFixed(d).replace(".",",");
@@ -111,8 +114,8 @@ function aggregate(objs){
   let run=0;const cum=net.map(v=>{run+=v;return run;});   // acertos acumulados
   // categorias normais: green x red. (Cartadas/múltiplas ficam FORA da amostragem:
   // são recreativas, amostra pequena e win rate não mede múltipla.)
-  const cg=CATS.map(c=>objs.filter(o=>o["Categoria"]===c[0]&&o["Resultado"]==="Green").length);
-  const cr=CATS.map(c=>objs.filter(o=>o["Categoria"]===c[0]&&o["Resultado"]==="Red").length);
+  const cg=CATS.map(c=>objs.filter(o=>catDe(o)===c[0]&&o["Resultado"]==="Green").length);
+  const cr=CATS.map(c=>objs.filter(o=>catDe(o)===c[0]&&o["Resultado"]==="Red").length);
   return {g,r,n:g+r,wr:(g+r)?100*g/(g+r):0,
     labels:dias.map(d=>d.length>=10?d.slice(8,10)+"/"+d.slice(5,7):d),
     gd,rd:rday,net,cum,
